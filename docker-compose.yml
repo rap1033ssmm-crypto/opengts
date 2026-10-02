@@ -1,0 +1,40 @@
+version: '3.8'
+
+# ==================================================================================================
+#   APEX SYNTHETICS & AUTONOMOUS DEPLOYMENT // MULTI-NODE CONTAINER ORCHESTRATION LAYERS
+# ==================================================================================================
+# REGISTRY AUTHENTICATION: ISSN 3143-9756 // BASE NODE STATION ID: WLT-LAND-OK-5111
+# SOVEREIGN DATA MANAGEMENT VERIFICATION ID: REGISTRY KEY ID: 0000-0009-3719-0307
+# ==================================================================================================
+
+services:
+  # --- BENCH 01: THE PERSISTENT IMMUTABLE DATA VAULT ENGINE ---
+  apex_database:
+    image: mariadb:10.6
+    container_name: apex_data_vault
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: apex_secure_vault
+      MYSQL_DATABASE: apex_telemetry_ledger
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # --- BENCH 02: THE REBRANDED TELEMETRY INGESTION INTERCEPT NODE ---
+  apex_tracker:
+    image: openjdk:8-jdk-alpine
+    container_name: apex_telemetry_receptor
+    restart: always
+    depends_on:
+      - apex_database
+    volumes:
+      - .:/usr/src/apex_synthetics
+      - ./logs:/var/log/apex_synthetics
+    working_dir: /usr/src/apex_synthetics
+    ports:
+      - "8080:8080"   # Front-End Web Viewport Cockpit Access
+      - "31272:31272" # TCP / UDP Multi-Channel Device Signal Listeners
+      - "31272:31272/udp"
+    command: >
+      sh -c "java -jar dist_jar_name=apex_synthetics_core.jar"
